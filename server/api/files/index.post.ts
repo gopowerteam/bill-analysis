@@ -1,13 +1,12 @@
 
-import { getResolvedPDFJS,configureUnPDF } from 'unpdf'
-import z from 'zod'
+import { getResolvedPDFJS } from 'unpdf'
+// import z from 'zod'
 import { TransactionChannelEnum } from '~/drizzle/schemas'
-import { importFromAliPayPDF } from '~/server/services/wxpay.service'
-import { extractTable } from '~/server/utils/pdf-parser'
+import { extractFromPDF } from '~/server/services/extract.service'
 
-const Schema = z.object({
-  channel: z.nativeEnum(TransactionChannelEnum)
-})
+// const Schema = z.object({
+//   channel: z.nativeEnum(TransactionChannelEnum)
+// })
 
 export default defineEventHandler(async (event) => {
   const { files } = await readBody<{ files: { content: string }[] }>(event)
@@ -22,6 +21,8 @@ export default defineEventHandler(async (event) => {
   const { getDocument } = await getResolvedPDFJS()
   const document = await getDocument(new Uint8Array(binaryString)).promise
   
-  importFromAliPayPDF(document)
+  const data = await  extractFromPDF(document, TransactionChannelEnum.WxPay)
+  
+  console.log(data.username, data.batch, data.transactions.slice(0,10))
   
 })

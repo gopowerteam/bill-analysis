@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     ['pinia-plugin-persistedstate/nuxt', {}],
     ['nuxt-file-storage', {}],
     ['dayjs-nuxt', {}],
+    ['@nuxt/eslint', {}],
   ],
   css: [
     '@unocss/reset/tailwind.css',
@@ -37,4 +38,9 @@ export default defineNuxtConfig({
     },
     storage: 'cookies',
   },
+  eslint: {
+    config:{
+      stylistic: true
+    }
+  }
 })

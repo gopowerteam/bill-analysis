@@ -1,5 +1,4 @@
-import { getResolvedPDFJS } from "unpdf";
-import { PDFPageProxy,PDFDocumentProxy } from "unpdf/pdfjs";
+import type { PDFPageProxy, PDFDocumentProxy } from "unpdf/pdfjs";
 
 
 const THRESHOLD_X = 5
@@ -53,7 +52,7 @@ export function extractRows(items: CellItem[], minCols?: number, maxCols?: numbe
 
 function extractRow(items: CellItem[]) {
   let prev: CellItem = extractCell(items)
-  let row = [prev]
+  const row = [prev]
 
   while (items.length && !isCellNextRow(prev, items[0])) {
     const cell = extractCell(items)
@@ -71,7 +70,10 @@ function extractCell(items: CellItem[]): CellItem {
 
   while (!finished) {
     const next = items[0]
-    if (next && Math.abs(next.x1 - first.x1) < THRESHOLD_X) {
+    if (next && (
+      (Math.abs(next.x1 - first.x1) < THRESHOLD_X) ||
+      (first.x1 <= next.x1 && first.x2 >= next.x2)
+    )) {
       cells.push(next)
       items.shift()
     } else {
@@ -97,7 +99,7 @@ function merageCells(cells: CellItem[]): CellItem {
     x1: first.x1,
     y1: first.y1,
     x2: latest.x2,
-    y2: latest.y2,
+           y2: latest.y2,
     s: cells.map(c => c.s).join(''),
   }
 }
@@ -126,7 +128,7 @@ export type TextItem = {
   /**
    * - Transformation matrix.
    */
-  transform: Array<any>;
+  transform: Array<number>;
   /**
    * - Width in device space.
    */
