@@ -1,5 +1,4 @@
-import type { PDFPageProxy, PDFDocumentProxy } from "unpdf/pdfjs";
-
+import type { PDFPageProxy, PDFDocumentProxy } from 'unpdf/pdfjs'
 
 const THRESHOLD_X = 5
 const THRESHOLD_Y = 20
@@ -7,8 +6,8 @@ const THRESHOLD_Y = 20
 function setTextBounds(text: TextItem) {
   const x = text.transform[4], y = text.transform[5], s = text.str,
     x2 = x + text.width,
-    y2 = y + text.height;
-  return { x1: x, y1: y, x2, y2, s };
+    y2 = y + text.height
+  return { x1: x, y1: y, x2, y2, s }
 }
 
 export async function extractTable(document: PDFDocumentProxy, minCols?: number, maxCols?: number) {
@@ -38,9 +37,9 @@ export function extractRows(items: CellItem[], minCols?: number, maxCols?: numbe
 
   while (items.length) {
     const row = extractRow(items)
-    const skipped =
-      (minCols !== undefined && row.length < minCols) ||
-      (maxCols !== undefined && row.length > maxCols)
+    const skipped
+      = (minCols !== undefined && row.length < minCols)
+      || (maxCols !== undefined && row.length > maxCols)
 
     if (!skipped) {
       rows.push(row)
@@ -71,12 +70,13 @@ function extractCell(items: CellItem[]): CellItem {
   while (!finished) {
     const next = items[0]
     if (next && (
-      (Math.abs(next.x1 - first.x1) < THRESHOLD_X) ||
-      (first.x1 <= next.x1 && first.x2 >= next.x2)
+      (Math.abs(next.x1 - first.x1) < THRESHOLD_X)
+      || (first.x1 <= next.x1 && first.x2 >= next.x2)
     )) {
       cells.push(next)
       items.shift()
-    } else {
+    }
+    else {
       finished = true
     }
   }
@@ -99,7 +99,7 @@ function merageCells(cells: CellItem[]): CellItem {
     x1: first.x1,
     y1: first.y1,
     x2: latest.x2,
-           y2: latest.y2,
+    y2: latest.y2,
     s: cells.map(c => c.s).join(''),
   }
 }
@@ -109,41 +109,41 @@ export type RowItem = {
 }
 
 export type CellItem = {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  s: string;
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+  s: string
 }
 
 export type TextItem = {
   /**
    * - Text content.
    */
-  str: string;
+  str: string
   /**
    * - Text direction: 'ttb', 'ltr' or 'rtl'.
    */
-  dir: string;
+  dir: string
   /**
    * - Transformation matrix.
    */
-  transform: Array<number>;
+  transform: Array<number>
   /**
    * - Width in device space.
    */
-  width: number;
+  width: number
   /**
    * - Height in device space.
    */
-  height: number;
+  height: number
   /**
    * - Font name used by PDF.js for converted font.
    */
-  fontName: string;
+  fontName: string
   /**
    * - Indicating if the text content is followed by a
    * line-break.
    */
-  hasEOL: boolean;
-};
+  hasEOL: boolean
+}

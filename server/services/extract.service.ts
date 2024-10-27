@@ -1,8 +1,8 @@
-import { PDFDocumentProxy } from "unpdf/pdfjs";
-import { TransactionChannelEnum, TransactionTypeEnum } from "~/drizzle/schemas";
+import type { PDFDocumentProxy } from 'unpdf/pdfjs'
 import dayjs from 'dayjs'
+import { TransactionChannelEnum, TransactionTypeEnum } from '~/drizzle/schemas'
 
-export function extractFromPDF(document: PDFDocumentProxy, channel: TransactionChannelEnum) {
+export function extractDataFromPDF(document: PDFDocumentProxy, channel: TransactionChannelEnum): Promise<Bill> {
   switch (channel) {
     case TransactionChannelEnum.Alipay:
       return extractFromAlipay(document)
@@ -23,7 +23,7 @@ export async function extractFromAlipay(document: PDFDocumentProxy) {
     username,
     idNumber,
     account,
-    channel: TransactionChannelEnum.WxPay
+    channel: TransactionChannelEnum.WxPay,
   }
 }
 
@@ -32,7 +32,7 @@ async function extractBatchFromAliPay(document: PDFDocumentProxy) {
   const items = await parserCellItems(page)
   const content = items[0]?.s
   const result = content.match(/^编号: (\d+)$/)
-  return result ? result[1] : null
+  return result ? result[1] : ''
 }
 
 async function extractUserFromAliPay(document: PDFDocumentProxy) {
@@ -40,16 +40,16 @@ async function extractUserFromAliPay(document: PDFDocumentProxy) {
   const items = await parserCellItems(page)
   const content = items[3]?.s
   // 提取姓名
-  const nameMatch = content.match(/(?<=:)(.*?)(?=\()/);
-  const name = nameMatch ? nameMatch[1] : null;
+  const nameMatch = content.match(/(?<=:)(.*?)(?=\()/)
+  const name = nameMatch ? nameMatch[1] : ''
 
   // 提取证件号码
-  const idNumberMatch = content.match(/(?<=证件号码:)(\d{18})/);
-  const idNumber = idNumberMatch ? idNumberMatch[1] : null;
+  const idNumberMatch = content.match(/(?<=证件号码:)(\d{18})/)
+  const idNumber = idNumberMatch ? idNumberMatch[1] : ''
 
   // 提取支付宝账号
-  const alipayAccountMatch = content.match(/支付宝账号(\S+@[\S.]+)中/);
-  const alipayAccount = alipayAccountMatch ? alipayAccountMatch[1] : null;
+  const alipayAccountMatch = content.match(/支付宝账号(\S+@[\S.]+)中/)
+  const alipayAccount = alipayAccountMatch ? alipayAccountMatch[1] : ''
 
   return [name, idNumber, alipayAccount]
 }
@@ -59,8 +59,7 @@ async function extractTransactionsFromAliPay(document: PDFDocumentProxy) {
 
   const findCell = requestFindCellInRow(rows, 8)
 
-  return rows.map(row => {
-
+  return rows.map((row) => {
     return {
       transactionType: parserTransactionType(findCell(row, 0)),
       counterparty: findCell(row, 1),
@@ -77,7 +76,6 @@ async function extractTransactionsFromAliPay(document: PDFDocumentProxy) {
 
 // WxPay Extract
 
-
 export async function extractFromWxPay(document: PDFDocumentProxy) {
   const batch = await extractBatchFromWxPay(document)
   const transactions = await extractTransactionsFromWxPay(document)
@@ -89,7 +87,7 @@ export async function extractFromWxPay(document: PDFDocumentProxy) {
     username,
     idNumber,
     account,
-    channel: TransactionChannelEnum.WxPay
+    channel: TransactionChannelEnum.WxPay,
   }
 }
 
@@ -98,7 +96,7 @@ async function extractBatchFromWxPay(document: PDFDocumentProxy) {
   const items = await parserCellItems(page)
   const content = items[0]?.s
   const result = content.match(/^编号：(\d+)$/)
-  return result ? result[1] : null
+  return result ? result[1] : ''
 }
 
 async function extractUserFromWxPay(document: PDFDocumentProxy) {
@@ -106,16 +104,16 @@ async function extractUserFromWxPay(document: PDFDocumentProxy) {
   const items = await parserCellItems(page)
   const content = items[2]?.s
   // 提取姓名
-  const nameMatch = content.match(/(?<=：)(.*?)(?=\()/);
-  const name = nameMatch ? nameMatch[1] : null;
+  const nameMatch = content.match(/(?<=：)(.*?)(?=\()/)
+  const name = nameMatch ? nameMatch[1] : ''
 
   // 提取证件号码
-  const idNumberMatch = content.match(/(?<=居民身份证：)(\d{18})/);
-  const idNumber = idNumberMatch ? idNumberMatch[1] : null;
+  const idNumberMatch = content.match(/(?<=居民身份证：)(\d{18})/)
+  const idNumber = idNumberMatch ? idNumberMatch[1] : ''
 
   // 提取支付宝账号
-  const alipayAccountMatch = content.match(/微信号：(\S+@[\S.]+)中/);
-  const alipayAccount = alipayAccountMatch ? alipayAccountMatch[1] : null;
+  const alipayAccountMatch = content.match(/微信号：(\S+@[\S.]+)中/)
+  const alipayAccount = alipayAccountMatch ? alipayAccountMatch[1] : ''
 
   return [name, idNumber, alipayAccount]
 }
@@ -125,8 +123,7 @@ async function extractTransactionsFromWxPay(document: PDFDocumentProxy) {
 
   const findCell = requestFindCellInRow(rows, 8)
 
-  return rows.map(row => {
-
+  return rows.map((row) => {
     return {
       transactionNo: findCell(row, 0),
       transactionTime: dayjs(findCell(row, 1), 'YYYY-MM-DDHH:mm:ss').format('YYYY-MM-DD HH:mm:ss'),
@@ -144,13 +141,12 @@ async function extractTransactionsFromWxPay(document: PDFDocumentProxy) {
 function requestFindCellInRow(rows: CellItem[][], size: number) {
   const columns = Array.from(Array(size), () => ({
     x1: NaN,
-    x2: NaN
+    x2: NaN,
   }))
 
   const data = rows.filter(x => x.length === size)
 
-
-  data.forEach(row => {
+  data.forEach((row) => {
     for (let i = 0; i < size; i++) {
       if (isNaN(columns[i].x1) || columns[i].x1 > row[i].x1) {
         columns[i].x1 = row[i].x1
@@ -170,7 +166,6 @@ function requestFindCellInRow(rows: CellItem[][], size: number) {
   }
 }
 
-
 function parserTransactionType(value: string) {
   switch (value) {
     case '收入':
@@ -181,4 +176,3 @@ function parserTransactionType(value: string) {
       return TransactionTypeEnum.Other
   }
 }
-

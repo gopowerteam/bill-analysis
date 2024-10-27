@@ -2,8 +2,33 @@
 import ReactivityTransform from '@vue-macros/reactivity-transform/vite'
 
 export default defineNuxtConfig({
-  compatibilityDate: '2024-04-03',
+  modules: [
+    ['@unocss/nuxt', {}],
+    ['arco-design-nuxt-module', {}],
+    ['@pinia/nuxt', {}],
+    ['pinia-plugin-persistedstate/nuxt', {}],
+    ['nuxt-file-storage', {}],
+    ['dayjs-nuxt', {}],
+    ['@nuxt/eslint', {}],
+  ],
+  imports: {
+    dirs: [
+      'config',
+      'components',
+      'components/**',
+      'components/**/*',
+      'composables',
+      'composables/**',
+      'store',
+      'server/utils/**',
+    ],
+  },
   devtools: { enabled: true },
+  css: [
+    '@unocss/reset/tailwind.css',
+    '@/styles/index.scss',
+  ],
+  compatibilityDate: '2024-04-03',
   vite: {
     plugins: [
       ReactivityTransform(),
@@ -16,19 +41,11 @@ export default defineNuxtConfig({
       },
     },
   },
-  modules: [
-    ['@unocss/nuxt', {}],
-    ['arco-design-nuxt-module', {}],
-    ['@pinia/nuxt', {}],
-    ['pinia-plugin-persistedstate/nuxt', {}],
-    ['nuxt-file-storage', {}],
-    ['dayjs-nuxt', {}],
-    ['@nuxt/eslint', {}],
-  ],
-  css: [
-    '@unocss/reset/tailwind.css',
-    '@/styles/index.scss',
-  ],
+  eslint: {
+    config: {
+      stylistic: true,
+    },
+  },
   pinia: {
     storesDirs: ['./stores/**'],
   },
@@ -38,9 +55,4 @@ export default defineNuxtConfig({
     },
     storage: 'cookies',
   },
-  eslint: {
-    config:{
-      stylistic: true
-    }
-  }
 })

@@ -2,8 +2,8 @@ import { defineConfig, presetUno } from 'unocss'
 import transformerDirective from '@unocss/transformer-directives'
 import presetIcons from '@unocss/preset-icons'
 import presetAttributify from '@unocss/preset-attributify'
-import { breakpoints } from './package.json'
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
+import { breakpoints } from './package.json'
 
 function defineBreakpoints() {
   return Object.entries(breakpoints).reduce<Record<string, string>>((result, [key, value]) => {
@@ -14,12 +14,12 @@ function defineBreakpoints() {
 
 function defineSVGloader() {
   return FileSystemIconLoader(
-    './assets/svg', svg => svg
+    './assets/svg', svg => svg,
   )
 }
 
 function defineIconifyLoader(name: string) {
-  return () => import(`@iconify-json/${name}`).then(i => i.icons)
+  return () => import(`@iconify-json/${name}/icons.json`).then(i => i.default)
 }
 
 export default defineConfig({
@@ -34,7 +34,8 @@ export default defineConfig({
       prefix: 'icon-',
       collections: {
         'park-outline': defineIconifyLoader('icon-park-outline'),
-        'svg': defineSVGloader()
+        'park': defineIconifyLoader('icon-park'),
+        'svg': defineSVGloader(),
       },
       extraProperties: {
         'display': 'inline-block',
@@ -55,7 +56,7 @@ export default defineConfig({
       lg: '1024px',
       xl: '1280px',
       // custom
-      ...defineBreakpoints()
+      ...defineBreakpoints(),
     },
   },
   shortcuts: [['flex-center', 'flex justify-center items-center']],
