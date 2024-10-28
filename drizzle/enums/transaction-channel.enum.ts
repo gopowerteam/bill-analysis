@@ -2,7 +2,7 @@ import { pgEnum } from 'drizzle-orm/pg-core'
 import { toPgEnum } from '../utils/to-pg-enum'
 
 export enum TransactionChannelEnum {
-  Alipay = 'Alipay',
+  Alipay = 'AliPay',
   WxPay = 'WxPay',
 }
 

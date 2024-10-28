@@ -7,6 +7,8 @@ declare global {
     username: string
     idNumber: string
     account: string
+    startTime: string
+    endTime: string
     channel: TransactionChannelEnum
   }
 

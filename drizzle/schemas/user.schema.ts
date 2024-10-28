@@ -5,18 +5,16 @@ import { pipe } from '../utils/pipe'
 import { SchemaWithTime } from '../fields'
 import { BatchSchema } from './batch.schema'
 
-
 export const UserSchema = pgTable('user', pipe(
   SchemaWithTime,
 )({
-  id: text("id").primaryKey().notNull(),
-  username: text("username").notNull(),
+  id: text('id').primaryKey().notNull(),
+  username: text('username').notNull(),
 }))
 
 export const UserRelations = relations(UserSchema, ({ many }) => ({
   batches: many(BatchSchema),
 }))
-
 
 export type User = InferSchemaType<'UserSchema', { batches: true }>
 

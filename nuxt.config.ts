@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import ReactivityTransform from '@vue-macros/reactivity-transform/vite'
+import { runtimeConfig } from './runtime.config'
 
 export default defineNuxtConfig({
   modules: [
@@ -28,7 +29,15 @@ export default defineNuxtConfig({
     '@unocss/reset/tailwind.css',
     '@/styles/index.scss',
   ],
+  runtimeConfig,
   compatibilityDate: '2024-04-03',
+  nitro: {
+    esbuild: {
+      options: {
+        target: 'esnext',
+      },
+    },
+  },
   vite: {
     plugins: [
       ReactivityTransform(),

@@ -16,6 +16,7 @@ export async function extractFromAlipay(document: PDFDocumentProxy) {
   const batch = await extractBatchFromAliPay(document)
   const transactions = await extractTransactionsFromAliPay(document)
   const [username, idNumber, account] = await extractUserFromAliPay(document)
+  const [startTime, endTime] = await extractTimeRangeFromAliPay(document)
 
   return {
     batch,
@@ -23,6 +24,8 @@ export async function extractFromAlipay(document: PDFDocumentProxy) {
     username,
     idNumber,
     account,
+    startTime,
+    endTime,
     channel: TransactionChannelEnum.WxPay,
   }
 }
@@ -48,7 +51,7 @@ async function extractUserFromAliPay(document: PDFDocumentProxy) {
   const idNumber = idNumberMatch ? idNumberMatch[1] : ''
 
   // 提取支付宝账号
-  const alipayAccountMatch = content.match(/支付宝账号(\S+@[\S.]+)中/)
+  const alipayAccountMatch = content.match(/支付宝账号(.*?)中明细信息/)
   const alipayAccount = alipayAccountMatch ? alipayAccountMatch[1] : ''
 
   return [name, idNumber, alipayAccount]
@@ -74,12 +77,27 @@ async function extractTransactionsFromAliPay(document: PDFDocumentProxy) {
     .filter(t => dayjs(t.transactionTime).isValid())
 }
 
+async function extractTimeRangeFromAliPay(document: PDFDocumentProxy) {
+  const page = await document.getPage(1)
+  const items = await parserCellItems(page)
+  const content = items[5]?.s
+  // // 提取姓名
+  const rangeMatch = content.match(/交易时间段：(.*) 至 (.*)/)
+  const startTime = rangeMatch ? rangeMatch[1] : ''
+  const endTime = rangeMatch ? rangeMatch[2] : ''
+  return [
+    startTime,
+    endTime,
+  ]
+}
+
 // WxPay Extract
 
 export async function extractFromWxPay(document: PDFDocumentProxy) {
   const batch = await extractBatchFromWxPay(document)
   const transactions = await extractTransactionsFromWxPay(document)
   const [username, idNumber, account] = await extractUserFromWxPay(document)
+  const [startTime, endTime] = await extractTimeRangeFromWxPay(document)
 
   return {
     batch,
@@ -87,6 +105,8 @@ export async function extractFromWxPay(document: PDFDocumentProxy) {
     username,
     idNumber,
     account,
+    startTime,
+    endTime,
     channel: TransactionChannelEnum.WxPay,
   }
 }
@@ -111,11 +131,11 @@ async function extractUserFromWxPay(document: PDFDocumentProxy) {
   const idNumberMatch = content.match(/(?<=居民身份证：)(\d{18})/)
   const idNumber = idNumberMatch ? idNumberMatch[1] : ''
 
-  // 提取支付宝账号
-  const alipayAccountMatch = content.match(/微信号：(\S+@[\S.]+)中/)
-  const alipayAccount = alipayAccountMatch ? alipayAccountMatch[1] : ''
+  // 提取微信账号
+  const wxpayAccountMatch = content.match(/微信号：(.*?)中的交易/)
+  const wxpayAccount = wxpayAccountMatch ? wxpayAccountMatch[1] : ''
 
-  return [name, idNumber, alipayAccount]
+  return [name, idNumber, wxpayAccount]
 }
 
 async function extractTransactionsFromWxPay(document: PDFDocumentProxy) {
@@ -138,6 +158,21 @@ async function extractTransactionsFromWxPay(document: PDFDocumentProxy) {
     .filter(t => dayjs(t.transactionTime).isValid())
 }
 
+async function extractTimeRangeFromWxPay(document: PDFDocumentProxy) {
+  const page = await document.getPage(1)
+  const items = await parserCellItems(page)
+  const content = items[5]?.s
+  // // 提取姓名
+  const rangeMatch = content.match(/(.*)至(.*)/)
+  const startTime = rangeMatch ? rangeMatch[1] : ''
+  const endTime = rangeMatch ? rangeMatch[2] : ''
+
+  return [
+    startTime,
+    endTime,
+  ]
+}
+
 function requestFindCellInRow(rows: CellItem[][], size: number) {
   const columns = Array.from(Array(size), () => ({
     x1: NaN,
@@ -156,8 +191,6 @@ function requestFindCellInRow(rows: CellItem[][], size: number) {
       }
     }
   })
-
-  console.log(columns)
 
   return (row: CellItem[], index: number) => {
     const { x1, x2 } = columns[index]

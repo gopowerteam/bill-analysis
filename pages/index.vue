@@ -34,27 +34,25 @@
 
 <script setup lang="ts">
 const { handleFileInput, files } = useFileStorage()
-let channel: 'AliPay' | 'WxPay'
-function onUploadPDF(type: 'AliPay' | 'WxPay', event: Event) {
-  channel = type
-  return handleFileInput(event)
-}
+async function onUploadPDF(channel: 'AliPay' | 'WxPay', event: Event) {
+  await handleFileInput(event)
 
-watch(() => files, async () => {
-  if (files.value && files.value.length) {
-    const [file] = files.value
-    const batchNo = await $fetch('/api/import', {
-      method: 'POST',
-      body: {
-        file,
-        channel,
-      },
-    })
-    console.log(batchNo)
+  const [file] = files.value
+  const batch = await $fetch('/api/import', {
+    method: 'POST',
+    body: {
+      file,
+      channel,
+    },
+  })
+
+  console.log(batch)
+
+  const target = event.target as HTMLInputElement
+  if (target) {
+    target.value = ''
   }
-}, {
-  deep: true,
-})
+}
 </script>
 
 <style scoped>

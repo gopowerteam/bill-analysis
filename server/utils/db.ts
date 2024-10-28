@@ -1,10 +1,9 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
-import pg from 'pg'
 import * as schema from '~/drizzle/schemas'
 
-const runtimeConfig = useRuntimeConfig()
+const { database } = useRuntimeConfig()
 
-const client = new pg.Client(runtimeConfig.database)
-await client.connect()
-
-export const db = drizzle(client, { schema })
+const DATABASE_URL = `postgresql://${database.user}:${database.password}@${database.host}:${database.port}/${database.database}`
+export const db = drizzle(DATABASE_URL, {
+  schema,
+})

@@ -20,6 +20,7 @@ async function reset() {
   }
 
   const queries = Object.values(tableSchema).map((table) => {
+    console.log(`TRUNCATE TABLE ${table.dbName};`)
     return sql.raw(`TRUNCATE TABLE ${table.dbName};`)
   })
 
