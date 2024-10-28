@@ -4,15 +4,15 @@ import { TransactionChannelEnum, TransactionTypeEnum } from '~/drizzle/schemas'
 
 export function extractDataFromPDF(document: PDFDocumentProxy, channel: TransactionChannelEnum): Promise<Bill> {
   switch (channel) {
-    case TransactionChannelEnum.Alipay:
-      return extractFromAlipay(document)
+    case TransactionChannelEnum.AliPay:
+      return extractFromAliPay(document)
     case TransactionChannelEnum.WxPay:
       return extractFromWxPay(document)
   }
 }
 
 // Alipay Extract
-export async function extractFromAlipay(document: PDFDocumentProxy) {
+export async function extractFromAliPay(document: PDFDocumentProxy) {
   const batch = await extractBatchFromAliPay(document)
   const transactions = await extractTransactionsFromAliPay(document)
   const [username, idNumber, account] = await extractUserFromAliPay(document)
@@ -26,7 +26,7 @@ export async function extractFromAlipay(document: PDFDocumentProxy) {
     account,
     startTime,
     endTime,
-    channel: TransactionChannelEnum.WxPay,
+    channel: TransactionChannelEnum.AliPay,
   }
 }
 

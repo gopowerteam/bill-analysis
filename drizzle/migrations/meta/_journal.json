@@ -15,6 +15,13 @@
       "when": 1730000438195,
       "tag": "0001_blushing_cobalt_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1730093610150,
+      "tag": "0002_bizarre_harry_osborn",
+      "breakpoints": true
     }
   ]
 }

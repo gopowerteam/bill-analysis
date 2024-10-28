@@ -3,7 +3,6 @@ import type { TransactionChannelEnum } from '~/drizzle/schemas'
 import { BatchSchema, TransactionSchema, UserSchema } from '~/drizzle/schemas'
 
 export async function importDBFromData(data: Bill) {
-  console.log(data)
   await createUser(data)
   await createBatch(data)
 }
