@@ -94,6 +94,9 @@ async function onUploadPDF(channel: 'AliPay' | 'WxPay', event: Event) {
   if (batches.every(x => x.batch !== data.batch)) {
     batches.push(data)
   }
+  else {
+    Message.error('请勿重复导入账单')
+  }
 
   const target = event.target as HTMLInputElement
   if (target) {
