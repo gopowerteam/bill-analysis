@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     const hour = index.toString().padStart(2, '0')
     const item = result.filter(x => x.time === hour) || []
     return {
-      time: hour,
+      time: `${hour}时`,
       countTotal: sum(item, x => x.count),
       countWxPay: item.find(x => x.channel === TransactionChannelEnum.WxPay)?.count || 0,
       countAliPay: item.find(x => x.channel === TransactionChannelEnum.AliPay)?.count || 0,

@@ -1,11 +1,24 @@
 <template>
   <div>
-    <div>
-      <Month />
-      <Hour />
-      <BankCard />
-      <Counterparty />
-    </div>
+    <AGrid
+      :cols="2"
+      :row-gap="12"
+      :col-gap="12"
+    >
+      <AGridItem>
+        <Hour />
+      </AGridItem>
+      <AGridItem>
+        <Month />
+      </AGridItem>
+      <AGridItem>
+        <BankCard />
+      </AGridItem>
+      <AGridItem>
+        <Counterparty />
+      </AGridItem>
+    </AGrid>
+    <div />
   </div>
 </template>
 

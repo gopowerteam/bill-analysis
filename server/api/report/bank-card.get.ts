@@ -1,5 +1,5 @@
 import z from 'zod'
-import { sql, inArray, count, and } from 'drizzle-orm'
+import { sql, inArray, count, and, desc } from 'drizzle-orm'
 import { sum, unique } from 'radash'
 import { TransactionChannelEnum, TransactionSchema } from '~/drizzle/schemas'
 
@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
   })
     .from(TransactionSchema)
     .groupBy(schema => [schema.method, schema.channel])
+    .orderBy(schema => desc(schema.count))
     .where(
       and(
         inArray(TransactionSchema.batchId, batches),

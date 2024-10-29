@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     ['nuxt-file-storage', {}],
     ['dayjs-nuxt', {}],
     ['@nuxt/eslint', {}],
+    ['nuxt-echarts', {}],
   ],
   imports: {
     dirs: [
@@ -49,6 +50,10 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+  echarts: {
+    charts: ['LineChart', 'BarChart'],
+    components: ['TitleComponent', 'DatasetComponent', 'ToolboxComponent', 'GridComponent', 'TooltipComponent'],
   },
   eslint: {
     config: {

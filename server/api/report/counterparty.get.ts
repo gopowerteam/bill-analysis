@@ -23,6 +23,11 @@ export default defineEventHandler(async (event) => {
         inArray(TransactionSchema.batchId, batches),
         not(
           eq(TransactionSchema.counterparty, ''),
+
+        ),
+        not(
+          eq(TransactionSchema.counterparty, '/'),
+
         ),
       ),
     )
