@@ -52,7 +52,5 @@ async function createTransactions(batch: string, channel: TransactionChannelEnum
       merchantNo: item.merchantNo,
       batchId: batch,
     })),
-  ).onConflictDoNothing({
-    target: TransactionSchema.transactionNo,
-  })
+  )
 }

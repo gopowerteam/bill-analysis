@@ -1,5 +1,6 @@
 import type { PDFDocumentProxy } from 'unpdf/pdfjs'
 import dayjs from 'dayjs'
+import { max, min } from 'radash'
 import { TransactionChannelEnum, TransactionTypeEnum } from '~/drizzle/schemas'
 
 export function extractDataFromPDF(document: PDFDocumentProxy, channel: TransactionChannelEnum): Promise<Bill> {
@@ -155,6 +156,7 @@ async function extractTransactionsFromWxPay(document: PDFDocumentProxy) {
       merchantNo: findCell(row, 7),
     }
   })
+    .filter(t => t.transactionNo !== '')
     .filter(t => dayjs(t.transactionTime).isValid())
 }
 
@@ -181,21 +183,23 @@ function requestFindCellInRow(rows: CellItem[][], size: number) {
 
   const data = rows.filter(x => x.length === size)
 
-  data.forEach((row) => {
-    for (let i = 0; i < size; i++) {
-      if (isNaN(columns[i].x1) || columns[i].x1 > row[i].x1) {
-        columns[i].x1 = row[i].x1
-      }
-      if (isNaN(columns[i].x2) || columns[i].x2 < row[i].x2) {
-        columns[i].x2 = row[i].x2
-      }
-    }
-  })
+  for (let i = 0; i < size; i++) {
+    columns[i].x1 = min(data.map(item => item[i].x1))!
+    columns[i].x2 = max(data.map(item => item[i].x2))!
+  }
 
   return (row: CellItem[], index: number) => {
-    const { x1, x2 } = columns[index]
-    const cell = row.find(cell => cell.x1 >= x1 && cell.x2 <= x2)
-    return cell?.s || ''
+    if (index === size - 1) {
+      const { x1, x2 } = columns[index]
+      const cell = row.find(cell => cell.x1 >= x1 && cell.x2 <= x2)
+      return cell?.s || ''
+    }
+    else {
+      const { x1 } = columns[index]
+      const { x2 } = columns[index + 1]
+      const cell = row.find(cell => cell.x1 >= x1 && cell.x2 <= x2)
+      return cell?.s || ''
+    }
   }
 }
 

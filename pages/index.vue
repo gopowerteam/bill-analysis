@@ -91,7 +91,9 @@ async function onUploadPDF(channel: 'AliPay' | 'WxPay', event: Event) {
     },
   })
 
-  batches.push(data)
+  if (batches.every(x => x.batch !== data.batch)) {
+    batches.push(data)
+  }
 
   const target = event.target as HTMLInputElement
   if (target) {

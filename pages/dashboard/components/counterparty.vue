@@ -49,7 +49,6 @@ async function requestData() {
       batches: batches,
     },
   })
-  console.log(data)
 }
 
 onMounted(async () => {
