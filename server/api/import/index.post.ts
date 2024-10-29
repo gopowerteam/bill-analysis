@@ -25,7 +25,6 @@ export default defineEventHandler(async (event) => {
   const document = await getDocument(new Uint8Array(binaryString)).promise
 
   const data = await extractDataFromPDF(document, channel)
-
   if (data.username && data.account && data.batch && data.idNumber) {
     await importDBFromData(data)
   }

@@ -47,7 +47,7 @@ async function extractUserFromAliPay(document: PDFDocumentProxy) {
   const name = nameMatch ? nameMatch[1] : ''
 
   // 提取证件号码
-  const idNumberMatch = content.match(/(?<=证件号码:)(\d{18})/)
+  const idNumberMatch = content.match(/(?<=证件号码:)(\d{18}|\d{17}[X|x])/)
   const idNumber = idNumberMatch ? idNumberMatch[1] : ''
 
   // 提取支付宝账号
@@ -128,7 +128,7 @@ async function extractUserFromWxPay(document: PDFDocumentProxy) {
   const name = nameMatch ? nameMatch[1] : ''
 
   // 提取证件号码
-  const idNumberMatch = content.match(/(?<=居民身份证：)(\d{18})/)
+  const idNumberMatch = content.match(/(?<=居民身份证：)(\d{18}|\d{17}[X|x])/)
   const idNumber = idNumberMatch ? idNumberMatch[1] : ''
 
   // 提取微信账号
