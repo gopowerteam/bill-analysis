@@ -20,7 +20,8 @@ let option = $ref<ECOption>()
 
 async function requestData() {
   const data = await $fetch('/api/report/hour', {
-    query: {
+    method: 'POST',
+    body: {
       batches,
     },
   })

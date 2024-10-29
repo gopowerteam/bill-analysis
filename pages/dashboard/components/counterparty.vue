@@ -44,9 +44,9 @@ const columns = [
   }]
 async function requestData() {
   data = await $fetch('/api/report/counterparty', {
-    method: 'get',
-    query: {
-      batches,
+    method: 'POST',
+    body: {
+      batches: batches,
     },
   })
   console.log(data)

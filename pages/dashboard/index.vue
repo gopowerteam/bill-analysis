@@ -36,6 +36,7 @@ definePageMeta({
   props: true,
 })
 
+console.log(Array.isArray(batches) ? batches : [batches])
 provide('batches', Array.isArray(batches) ? batches : [batches])
 onMounted(async () => {
 })

@@ -8,7 +8,7 @@ const Schema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const { batches } = await useSafeQuery(event, Schema)
+  const { batches } = await useSafeBody(event, Schema)
 
   const result = await db.select({
     method: TransactionSchema.transactionMethod,

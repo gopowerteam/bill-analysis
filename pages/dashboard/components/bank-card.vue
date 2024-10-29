@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-const batches = inject('batches')
+const batches = inject<string[]>('batches')!
 
 let data = $ref<{
   cardName: string
@@ -54,8 +54,8 @@ const columns = [{
 }]
 async function requestData() {
   data = await $request('/api/report/bank-card', {
-    method: 'GET',
-    query: {
+    method: 'POST',
+    body: {
       batches,
     },
   })

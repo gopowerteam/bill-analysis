@@ -18,7 +18,8 @@ let option = $ref<ECOption>()
 
 async function requestData() {
   const data = await $fetch('/api/report/month', {
-    query: {
+    method: 'POST',
+    body: {
       batches,
     },
   })
