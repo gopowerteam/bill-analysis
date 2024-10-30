@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-const batches = inject('batches')
+const record = inject<string>('record')!
 
 let data = $ref<{
   cardName: string
@@ -43,10 +43,10 @@ const columns = [
     slotName: 'amount',
   }]
 async function requestData() {
-  data = await $fetch('/api/report/counterparty', {
-    method: 'POST',
-    body: {
-      batches: batches,
+  data = await $request('/api/report/:record/counterparty', {
+    method: 'GET',
+    params: {
+      record,
     },
   })
 }

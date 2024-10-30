@@ -29,6 +29,7 @@ async function createBatch(data: Bill) {
       channel: data.channel,
       userId: data.idNumber,
       startTime: data.startTime,
+      count: data.transactions.length,
       endTime: data.endTime,
     })
       .returning()

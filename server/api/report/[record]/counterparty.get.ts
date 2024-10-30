@@ -1,13 +1,16 @@
 import z from 'zod'
 import { and, inArray, sql, desc, eq, not } from 'drizzle-orm'
-import { TransactionSchema } from '~/drizzle/schemas'
+import { BatchRecordSchema, TransactionSchema } from '~/drizzle/schemas'
 
 const Schema = z.object({
-  batches: z.string().array().nonempty(),
+  record: z.string(),
 })
 
 export default defineEventHandler(async (event) => {
-  const { batches } = await useSafeBody(event, Schema)
+  const { record } = await useSafeParams(event, Schema)
+
+  const data = await db.query.BatchRecordSchema.findMany({ where: eq(BatchRecordSchema.recordId, record) })
+  const batches = data.map(x => x.batchId)
 
   const result = await db.select({
     counterparty: TransactionSchema.counterparty,

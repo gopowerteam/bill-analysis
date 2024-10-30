@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-const batches = inject<string[]>('batches')!
+const record = inject<string>('record')!
 
 let data = $ref<{
   cardName: string
@@ -53,10 +53,11 @@ const columns = [{
   slotName: 'channel',
 }]
 async function requestData() {
-  data = await $request('/api/report/bank-card', {
-    method: 'POST',
-    body: {
-      batches,
+  console.log(record, 11)
+  data = await $request('/api/report/:record/bank-card', {
+    method: 'GET',
+    params: {
+      record,
     },
   })
 }

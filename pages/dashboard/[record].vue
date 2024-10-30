@@ -29,16 +29,11 @@ import BankCard from './components/bank-card.vue'
 import Counterparty from './components/counterparty.vue'
 
 const route = useRoute()
-const batches = route.query.batches
 
 definePageMeta({
   name: 'dashboard',
-  props: true,
 })
-
-provide('batches', Array.isArray(batches) ? batches : [batches])
-onMounted(async () => {
-})
+provide('record', route.params.record)
 </script>
 
 <style scoped>

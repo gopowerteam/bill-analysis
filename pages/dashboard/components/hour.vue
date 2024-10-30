@@ -14,15 +14,14 @@
 </template>
 
 <script setup lang="ts">
-const batches = inject('batches')
-
+const record = inject<string>('record')!
 let option = $ref<ECOption>()
 
 async function requestData() {
-  const data = await $fetch('/api/report/hour', {
-    method: 'POST',
-    body: {
-      batches,
+  const data = await $request('/api/report/:record/hour', {
+    method: 'GET',
+    params: {
+      record,
     },
   })
 

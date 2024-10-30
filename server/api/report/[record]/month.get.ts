@@ -1,14 +1,17 @@
 import z from 'zod'
-import { sql, inArray, count } from 'drizzle-orm'
+import { sql, inArray, count, eq } from 'drizzle-orm'
 import { sum, unique } from 'radash'
-import { TransactionChannelEnum, TransactionSchema } from '~/drizzle/schemas'
+import { BatchRecordSchema, TransactionChannelEnum, TransactionSchema } from '~/drizzle/schemas'
 
 const Schema = z.object({
-  batches: z.string().array().nonempty(),
+  record: z.string(),
 })
 
 export default defineEventHandler(async (event) => {
-  const { batches } = await useSafeBody(event, Schema)
+  const { record } = await useSafeParams(event, Schema)
+
+  const data = await db.query.BatchRecordSchema.findMany({ where: eq(BatchRecordSchema.recordId, record) })
+  const batches = data.map(x => x.batchId)
 
   const result = await db.select({
     channel: TransactionSchema.transactionChannel,

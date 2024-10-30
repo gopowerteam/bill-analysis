@@ -103,6 +103,7 @@ async function onUploadPDF(channel: 'AliPay' | 'WxPay', event: Event) {
     target.value = ''
   }
 }
+
 async function onSubmit() {
   if (!batches.length) {
     return
@@ -112,12 +113,26 @@ async function onSubmit() {
     return Message.error('请确认是否为同一用户的账单')
   }
 
-  navigateTo({
-    name: 'dashboard',
-    query: {
+  const record = await $request('/api/record/create', {
+    method: 'POST',
+    body: {
       batches: batches.map(x => x.batch),
     },
   })
+
+  console.log(record)
+  navigateTo({
+    name: 'dashboard',
+    params: {
+      record: record.id,
+    },
+  })
+  // navigateTo({
+  //   name: 'dashboard',
+  //   params: {
+  //     record: record.id,
+  //   },
+  // })
 }
 </script>
 

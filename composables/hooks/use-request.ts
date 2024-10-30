@@ -8,17 +8,20 @@ type AvailableRouterMethod<R extends NitroFetchRequest> = Uppercase<_AvailableRo
 
 function onRequest(fetchOptions: FetchContext): Promise<void> | void {
   const { options, request } = fetchOptions
-
   // Append Params
   if (typeof options.params === 'object' && typeof request === 'string') {
     for (const [key, val] of Object.entries(options.params)) {
       if (['string', 'number'].includes(typeof val)) {
         fetchOptions.request = request.replaceAll(`:${key}`, String(val))
       }
-    }
 
-    delete options.params
+      delete fetchOptions.options.params?.[key]
+    }
+    fetchOptions.options.params = {}
+    delete fetchOptions.options.params
   }
+
+  console.log(fetchOptions.options)
 }
 
 function onRequestError(error: FetchContext): Promise<void> | void {
