@@ -5,7 +5,7 @@
   >
     <template #title>
       <div class="title">
-        活跃-年
+        月均收入/支出趋势图
       </div>
     </template>
     <div class="p-10px w-full h-500px flex flex-col relative">
@@ -20,14 +20,14 @@
 </template>
 
 <script setup lang="ts">
-import { unique } from 'radash'
+import { unique, sum } from 'radash'
+import { TransactionTypeEnum } from '~/drizzle/schemas'
 
 const store = useStore()
 let option = $ref<ECOption>()
 
 async function requestData() {
-  console.log(store.record!.id)
-  const data = await $request('/api/report/:record/month', {
+  const data = await $request('/api/report/:record/in-out-trend', {
     method: 'GET',
     params: {
       record: store.record!.id,
@@ -39,10 +39,11 @@ async function requestData() {
 
 function render(data: {
   time: string
-  countTotal: number
-  countWxPay: number
-  countAliPay: number
+  type: TransactionTypeEnum
+  amount: number
 }[]) {
+  console.log(data)
+  console.log(data.filter(x => x.type === TransactionTypeEnum.In).map(x => x.amount / 100))
   option = {
     tooltip: {
       trigger: 'axis',
@@ -50,7 +51,26 @@ function render(data: {
         type: 'shadow',
       },
     },
-    legend: {},
+    legend: {
+      orient: 'vertical',
+      top: '0',
+      left: '45',
+      formatter: (name: string) => {
+        switch (name) {
+          case '收入':{
+            const total = sum(data.filter(x => x.type === TransactionTypeEnum.In), x => x.amount)
+            const avg = total / unique(data.map(x => x.time)).length
+            return `收入 (共 ${(total / 100000).toFixed(2)} K 平均 ${(avg / 100000).toFixed(2)}/月)`
+          }
+          case '支出':{
+            const total = sum(data.filter(x => x.type === TransactionTypeEnum.Out), x => x.amount)
+            const avg = total / unique(data.map(x => x.time)).length
+            return `支出 (共 ${(total / 100000).toFixed(2)} K 平均 ${(avg / 100000).toFixed(2)}/月)`
+          }
+        }
+      },
+
+    },
     yAxis: {
       type: 'value',
       boundaryGap: [0, 0.01],
@@ -61,17 +81,17 @@ function render(data: {
     },
     series: [
       {
-        name: '支付宝',
+        name: '收入',
         type: 'bar',
-        barWidth: 10,
-        data: data.map(x => x.countAliPay),
+        barWidth: 20,
+        data: data.filter(x => x.type === TransactionTypeEnum.In).map(x => x.amount / 100),
         label: { show: true, position: 'top' },
       },
       {
-        name: '微信',
+        name: '支出',
         type: 'bar',
-        barWidth: 10,
-        data: data.map(x => x.countWxPay),
+        barWidth: 20,
+        data: data.filter(x => x.type === TransactionTypeEnum.Out).map(x => x.amount / 100),
         label: { show: true, position: 'top' },
       },
     ],

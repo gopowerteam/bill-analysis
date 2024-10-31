@@ -8,7 +8,7 @@
         交易方
       </div>
     </template>
-    <div class="p-10px w-full h-500px relative space-y-10px">
+    <div class="p-10px w-full h-300px relative space-y-10px">
       <div class="flex-auto">
         <ATable
           :height="500"

@@ -27,6 +27,9 @@
         <AGridItem>
           <Counterparty />
         </AGridItem>
+        <AGridItem :span="2">
+          <InOutTrend />
+        </AGridItem>
       </AGrid>
     </ASpin>
   </div>
@@ -38,6 +41,7 @@ import Hour from './components/hour.vue'
 import BankCard from './components/bank-card.vue'
 import Counterparty from './components/counterparty.vue'
 import Record from './components/record.vue'
+import InOutTrend from './components/in-out-trend.vue'
 import { useStore } from '~/stores'
 
 const store = useStore()
