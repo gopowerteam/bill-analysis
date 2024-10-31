@@ -1,12 +1,14 @@
 <template>
-  <ASpin
+  <ACard
     :loading="!option"
     class="w-full h-full"
   >
-    <div class="p-10px w-full h-500px flex flex-col relative">
+    <template #title>
       <div class="title">
         活跃-年
       </div>
+    </template>
+    <div class="p-10px w-full h-500px flex flex-col relative">
       <div class="flex-auto absolute inset-0">
         <VChart
           autoresize
@@ -14,7 +16,7 @@
         />
       </div>
     </div>
-  </ASpin>
+  </ACard>
 </template>
 
 <script setup lang="ts">

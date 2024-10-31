@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm'
+import { sum } from 'radash'
 import type { TransactionChannelEnum } from '~/drizzle/schemas'
-import { BatchSchema, TransactionSchema, UserSchema } from '~/drizzle/schemas'
+import { BatchSchema, TransactionSchema, TransactionTypeEnum, UserSchema } from '~/drizzle/schemas'
 
 export async function importDBFromData(data: Bill) {
   await createUser(data)
@@ -23,6 +24,8 @@ async function createBatch(data: Bill) {
     return target.id
   }
   else {
+    const inAmount = sum(data.transactions.filter(x => x.transactionType === TransactionTypeEnum.In), x => x.transactionAmount)
+    const outAmount = sum(data.transactions.filter(x => x.transactionType === TransactionTypeEnum.Out), x => x.transactionAmount)
     const [batch] = await db.insert(BatchSchema).values({
       id: data.batch,
       account: data.account,
@@ -31,6 +34,8 @@ async function createBatch(data: Bill) {
       startTime: data.startTime,
       count: data.transactions.length,
       endTime: data.endTime,
+      inAmount,
+      outAmount,
     })
       .returning()
 

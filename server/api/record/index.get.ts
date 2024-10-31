@@ -9,7 +9,11 @@ export default defineEventHandler(async (event) => {
     where: eq(RecordSchema.id, id),
     with: {
       user: true,
-      batches: true,
+      batches: {
+        with: {
+          batch: true,
+        },
+      },
     },
   })
 

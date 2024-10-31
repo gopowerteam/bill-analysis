@@ -1,5 +1,5 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
-import { pgTable, text } from 'drizzle-orm/pg-core'
+import { pgTable, primaryKey, text } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { pipe } from '../utils/pipe'
 import { SchemaWithTime } from '../fields'
@@ -11,6 +11,8 @@ export const BatchRecordSchema = pgTable('batch_record', pipe(
 )({
   batchId: text('batch_id').notNull().references(() => BatchSchema.id),
   recordId: text('record_id').notNull().references(() => RecordSchema.id),
+}), t => ({
+  pk: primaryKey({ columns: [t.batchId, t.recordId] }),
 }))
 
 export const BatchRecordRelations = relations(BatchRecordSchema, ({ one }) => ({

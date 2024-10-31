@@ -21,7 +21,14 @@ export const RecordRelations = relations(RecordSchema, ({ one, many }) => ({
   batches: many(BatchRecordSchema),
 }))
 
-export type Record = InferSchemaType<'RecordSchema', { user: true, batches: true }>
+export type Record = InferSchemaType<'RecordSchema', {
+  user: true
+  batches: {
+    with: {
+      batch: true
+    }
+  }
+}>
 
 export const CreateRecordSchema = createInsertSchema(RecordSchema)
 export const SelectRecordSchema = createSelectSchema(RecordSchema)

@@ -1,9 +1,14 @@
 <template>
-  <ASpin :loading="!data?.length">
-    <div class="p-10px w-full h-500px relative space-y-10px">
+  <ACard
+    :loading="!data?.length"
+    hoverable
+  >
+    <template #title>
       <div class="title">
-        银行卡列表
+        交易方
       </div>
+    </template>
+    <div class="p-10px w-full h-500px relative space-y-10px">
       <div class="flex-auto">
         <ATable
           :height="500"
@@ -19,7 +24,7 @@
         </ATable>
       </div>
     </div>
-  </ASpin>
+  </ACard>
 </template>
 
 <script setup lang="ts">

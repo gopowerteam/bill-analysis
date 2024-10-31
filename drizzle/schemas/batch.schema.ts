@@ -16,6 +16,8 @@ export const BatchSchema = pgTable('batch', pipe(
   channel: TransactionChannelEnumFields('channel').notNull(),
   account: text('account').notNull(),
   count: integer('count').notNull(),
+  inAmount: integer('in_amount').notNull(),
+  outAmount: integer('out_amount').notNull(),
   startTime: timestamp('start_time', { withTimezone: true, mode: 'string' }),
   endTime: timestamp('end_time', { withTimezone: true, mode: 'string' }),
 }))
