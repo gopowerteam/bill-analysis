@@ -7,7 +7,7 @@
       <div class="flex space-x-20px">
         <div class="wxpay rounded-10px shadow h-200px w-250px flex-center relative">
           <div class="space-y-2 text-center">
-            <i class="icon-park:wechat w-80px h-80px" />
+            <i class="icon-svg:wxpay w-80px h-80px" />
             <div>微信</div>
           </div>
           <input
@@ -18,7 +18,7 @@
         </div>
         <div class="wxpay rounded-10px shadow h-200px w-250px flex-center relative">
           <div class="space-y-2 text-center">
-            <i class="icon-park:alipay w-80px h-80px" />
+            <i class="icon-svg:alipay w-80px h-80px" />
             <div>支付宝</div>
           </div>
           <input

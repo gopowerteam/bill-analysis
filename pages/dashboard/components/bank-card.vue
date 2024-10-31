@@ -20,11 +20,11 @@
             <div class="flex space-x-2">
               <i
                 v-if="record.channel.includes('WxPay')"
-                class="icon-park-outline:wechat"
+                class="icon-svg:wxpay"
               />
               <i
                 v-if="record.channel.includes('AliPay')"
-                class="icon-park-outline:alipay"
+                class="icon-svg:alipay"
               />
             </div>
           </template>

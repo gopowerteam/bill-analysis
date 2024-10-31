@@ -23,8 +23,23 @@
           v-for="item in store?.record?.batches"
           :key="item.batchId"
           class="shadow p-10px"
-          :title="TransactionChannelDict.get(item.batch.channel)"
         >
+          <template #title>
+            <div
+              v-if="item.batch.channel===TransactionChannelEnum.WxPay"
+              class="flex items-center space-x-2"
+            >
+              <i class="icon-svg:wxpay w-20px h-20px" />
+              <div>微信</div>
+            </div>
+            <div
+              v-if="item.batch.channel===TransactionChannelEnum.AliPay"
+              class="flex items-center space-x-2"
+            >
+              <i class="icon-svg:alipay w-20px h-20px" />
+              <div>支付宝</div>
+            </div>
+          </template>
           <ADescriptions :column="2">
             <ADescriptionsItem
               label="账单编号"
@@ -52,6 +67,8 @@
 </template>
 
 <script setup lang="ts">
+import { TransactionChannelEnum } from '~/drizzle/schemas'
+
 const store = useStore()
 </script>
 
