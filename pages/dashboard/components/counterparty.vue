@@ -1,27 +1,29 @@
 <template>
-  <div class="p-10px w-full h-500px relative space-y-10px">
-    <div class="title">
-      银行卡列表
+  <ASpin :loading="!data?.length">
+    <div class="p-10px w-full h-500px relative space-y-10px">
+      <div class="title">
+        银行卡列表
+      </div>
+      <div class="flex-auto">
+        <ATable
+          :height="500"
+          :data="data"
+          :columns="columns"
+          :pagination="false"
+        >
+          <template #amount="{ record: { amount } }">
+            <div class="flex space-x-2">
+              {{ amount /100 }} 元
+            </div>
+          </template>
+        </ATable>
+      </div>
     </div>
-    <div class="flex-auto">
-      <ATable
-        :height="500"
-        :data="data"
-        :columns="columns"
-        :pagination="false"
-      >
-        <template #amount="{ record }">
-          <div class="flex space-x-2">
-            {{ record.amount /100 }} 元
-          </div>
-        </template>
-      </ATable>
-    </div>
-  </div>
+  </ASpin>
 </template>
 
 <script setup lang="ts">
-const record = inject<string>('record')!
+const store = useStore()
 
 let data = $ref<{
   cardName: string
@@ -46,7 +48,7 @@ async function requestData() {
   data = await $request('/api/report/:record/counterparty', {
     method: 'GET',
     params: {
-      record,
+      record: store.record!.id,
     },
   })
 }

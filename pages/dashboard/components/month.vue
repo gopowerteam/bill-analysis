@@ -1,25 +1,32 @@
 <template>
-  <div class="p-10px w-full h-500px flex flex-col relative">
-    <div class="title">
-      活跃-年
+  <ASpin
+    :loading="!option"
+    class="w-full h-full"
+  >
+    <div class="p-10px w-full h-500px flex flex-col relative">
+      <div class="title">
+        活跃-年
+      </div>
+      <div class="flex-auto absolute inset-0">
+        <VChart
+          autoresize
+          :option="option"
+        />
+      </div>
     </div>
-    <div class="flex-auto absolute inset-0">
-      <VChart
-        :option="option"
-      />
-    </div>
-  </div>
+  </ASpin>
 </template>
 
 <script setup lang="ts">
-const record = inject<string>('record')!
+const store = useStore()
 let option = $ref<ECOption>()
 
 async function requestData() {
+  console.log(store.record!.id)
   const data = await $request('/api/report/:record/month', {
     method: 'GET',
     params: {
-      record,
+      record: store.record!.id,
     },
   })
 

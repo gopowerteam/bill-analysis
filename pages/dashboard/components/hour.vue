@@ -1,27 +1,33 @@
 <template>
-  <div
-    class="p-10px w-full h-500px flex flex-col relative"
+  <ASpin
+    :loading="!option"
+    class="w-full h-full"
   >
-    <div class="title">
-      活跃-日
+    <div
+      class="p-10px w-full h-500px flex flex-col relative"
+    >
+      <div class="title">
+        活跃-日
+      </div>
+      <div class="flex-auto absolute inset-0">
+        <VChart
+          autoresize
+          :option="option"
+        />
+      </div>
     </div>
-    <div class="flex-auto absolute inset-0">
-      <VChart
-        :option="option"
-      />
-    </div>
-  </div>
+  </ASpin>
 </template>
 
 <script setup lang="ts">
-const record = inject<string>('record')!
+const store = useStore()
 let option = $ref<ECOption>()
 
 async function requestData() {
   const data = await $request('/api/report/:record/hour', {
     method: 'GET',
     params: {
-      record,
+      record: store.record!.id,
     },
   })
 
@@ -66,19 +72,19 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.title{
+  .title{
   display: flex;
   align-items: center;
   font-size: 16px;
   font-weight: bold;
   &::before{
-    content: ' ';
-    display: inline-block;
-    width: 5px;
-    height: 16px;
-    background: red;
-    margin-right: 8px;
-    margin-left: 8px;
+  content: ' ';
+  display: inline-block;
+  width: 5px;
+  height: 16px;
+  background: red;
+  margin-right: 8px;
+  margin-left: 8px;
   }
-}
+  }
 </style>

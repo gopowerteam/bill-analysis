@@ -1,3 +1,5 @@
+import { useStore } from '~/stores'
+
 async function toTask1() {
 
 }
@@ -7,9 +9,9 @@ async function toTask2() {
 }
 
 export default defineNuxtRouteMiddleware(async () => {
-  const appStore = useAppStore()
+  const store = useStore()
 
-  if (appStore.ready || import.meta.client) {
+  if (store.ready || import.meta.client) {
     return
   }
 

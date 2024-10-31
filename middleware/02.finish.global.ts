@@ -1,7 +1,9 @@
+import { useStore } from '~/stores'
+
 export default defineNuxtRouteMiddleware(async () => {
-  const appStore = useAppStore()
+  const store = useStore()
 
   if (import.meta.client) {
-    appStore.setReady()
+    store.setReady()
   }
 })

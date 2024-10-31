@@ -1,34 +1,41 @@
 <template>
-  <div class="p-10px w-full h-500px relative space-y-10px">
-    <div class="title">
-      银行卡列表
+  <ASpin
+    :loading="!data?.length"
+    class="w-full h-full"
+  >
+    <div class="p-10px w-full h-500px relative space-y-10px">
+      <div class="title">
+        银行卡列表
+      </div>
+      <div class="flex-auto">
+        <ATable
+          :height="500"
+          :data="data"
+          :columns="columns"
+          :pagination="false"
+        >
+          <template #channel="{ record }">
+            <div class="flex space-x-2">
+              <i
+                v-if="record.channel.includes('WxPay')"
+                class="icon-park-outline:wechat"
+              />
+              <i
+                v-if="record.channel.includes('AliPay')"
+                class="icon-park-outline:alipay"
+              />
+            </div>
+          </template>
+        </ATable>
+      </div>
     </div>
-    <div class="flex-auto">
-      <ATable
-        :height="500"
-        :data="data"
-        :columns="columns"
-        :pagination="false"
-      >
-        <template #channel="{ record }">
-          <div class="flex space-x-2">
-            <i
-              v-if="record.channel.includes('WxPay')"
-              class="icon-park-outline:wechat"
-            />
-            <i
-              v-if="record.channel.includes('AliPay')"
-              class="icon-park-outline:alipay"
-            />
-          </div>
-        </template>
-      </ATable>
-    </div>
-  </div>
+  </ASpin>
 </template>
 
 <script setup lang="ts">
-const record = inject<string>('record')!
+import { useStore } from '~/stores'
+
+const store = useStore()
 
 let data = $ref<{
   cardName: string
@@ -52,12 +59,12 @@ const columns = [{
   dataIndex: 'channel',
   slotName: 'channel',
 }]
+
 async function requestData() {
-  console.log(record, 11)
   data = await $request('/api/report/:record/bank-card', {
     method: 'GET',
     params: {
-      record,
+      record: store.record!.id,
     },
   })
 }
