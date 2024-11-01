@@ -60,12 +60,12 @@ function render(data: {
           case '收入':{
             const total = sum(data.filter(x => x.type === TransactionTypeEnum.In), x => x.amount)
             const avg = total / unique(data.map(x => x.time)).length
-            return `收入 (共 ${(total / 100000).toFixed(2)} K 平均 ${(avg / 100000).toFixed(2)}/月)`
+            return `收入 (共 ${useCurrency(total, { outputUnit: '千', suffix: false })}K 平均 ${(avg / 100000).toFixed(2)}K/月)`
           }
           case '支出':{
             const total = sum(data.filter(x => x.type === TransactionTypeEnum.Out), x => x.amount)
             const avg = total / unique(data.map(x => x.time)).length
-            return `支出 (共 ${(total / 100000).toFixed(2)} K 平均 ${(avg / 100000).toFixed(2)}/月)`
+            return `支出 (共 ${useCurrency(total, { outputUnit: '千', suffix: false })}K 平均 ${(avg / 100000).toFixed(2)}K/月)`
           }
         }
       },

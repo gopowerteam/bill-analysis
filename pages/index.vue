@@ -36,18 +36,44 @@
           <div class="w-520px rounded-10px shadow p-10px">
             <div v-if="batches.length">
               <div class="flex justify-between mb-10px">
-                <div>姓名:{{ user?.username }}</div>
-                <div>身份证号: {{ user?.idNumber }}</div>
+                <div class="space-x-1">
+                  <span class="text-#333">姓名: </span>
+                  <span class="font-bold">{{ user?.username }}</span>
+                </div>
+                <div class="space-x-1">
+                  <span class="text-#333">身份证号: </span>
+                  <span class="font-bold">{{ user?.idNumber }}</span>
+                </div>
               </div>
               <ADivider />
               <div class="space-y-2">
                 <div
                   v-for="(item) in batches"
                   :key="item.batch"
-                  class="flex justify-between"
+                  class="flex items-center space-x-10px"
                 >
-                  <div>编号: {{ item.batch }}</div>
-                  <div>{{ TransactionChannelDict.get(item.channel) }}</div>
+                  <div>
+                    <i
+                      v-if="item.channel===TransactionChannelEnum.WxPay"
+                      class="icon-svg:wxpay w-20px h-20px"
+                    />
+                    <i
+                      v-if="item.channel===TransactionChannelEnum.AliPay"
+                      class="icon-svg:alipay w-20px h-20px"
+                    />
+                  </div>
+                  <div class="flex-auto">
+                    编号: {{ item.batch }}
+                  </div>
+                  <div>
+                    <AButton
+                      type="text"
+                      size="mini"
+                      @click="() => onDelete(item.batch)"
+                    >
+                      <i class="icon-park-outline:close" />
+                    </AButton>
+                  </div>
                 </div>
               </div>
             </div>
@@ -76,12 +102,12 @@
 
 <script setup lang="ts">
 import { pick } from 'radash'
-import { TransactionChannelDict } from '@/config/dict.config'
+import { TransactionChannelEnum } from '~/drizzle/schemas'
 
 let loading = $ref(false)
 const { handleFileInput, files } = useFileStorage()
 
-const batches = $ref<Omit<Bill, 'transactions'>[]>([])
+let batches = $ref<Omit<Bill, 'transactions'>[]>([])
 const user = $computed(() => {
   if (batches.length) {
     return pick(batches[0], ['username', 'idNumber'])
@@ -121,6 +147,10 @@ async function onUploadPDF(channel: 'AliPay' | 'WxPay', event: Event) {
   }
 }
 
+function onDelete(batch: string) {
+  batches = batches.filter(x => x.batch !== batch)
+}
+
 async function onSubmit() {
   if (!batches.length) {
     return
@@ -154,13 +184,6 @@ async function onSubmit() {
   finally {
     loading = false
   }
-
-  // navigateTo({
-  //   name: 'dashboard',
-  //   params: {
-  //     record: record.id,
-  //   },
-  // })
 }
 </script>
 

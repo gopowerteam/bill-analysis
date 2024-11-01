@@ -17,8 +17,11 @@
           :pagination="false"
         >
           <template #amount="{ record: { amount } }">
-            <div class="flex space-x-2">
-              {{ amount /100 }} 元
+            <div
+              v-currency
+              class="space-x-2 text-right"
+            >
+              {{ amount }}
             </div>
           </template>
         </ATable>
@@ -47,6 +50,7 @@ const columns = [
     align: 'center' as const,
   }, {
     title: '交易金额',
+    align: 'right' as const,
     slotName: 'amount',
   }]
 async function requestData() {
