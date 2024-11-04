@@ -7,9 +7,7 @@ import { TransactionTypeEnumFields } from '../enums/transaction-type.enum'
 import { TransactionChannelEnumFields } from '../enums/transaction-channel.enum'
 import { BatchSchema } from './batch.schema'
 
-export const TransactionSchema = pgTable('transaction', pipe(
-  SchemaWithTime,
-)({
+export const TransactionSchemaColumns = {
   transactionNo: text('transaction_no').primaryKey().notNull(),
   transactionTime: timestamp('transaction_time', { withTimezone: true, mode: 'string' }).notNull(),
   transactionMark: text('transaction_mark'),
@@ -20,7 +18,11 @@ export const TransactionSchema = pgTable('transaction', pipe(
   counterparty: text('counterparty').notNull(),
   merchantNo: text('merchant_no'),
   batchId: text('batch_id').notNull(),
-}))
+}
+
+export const TransactionSchema = pgTable('transaction', pipe(
+  SchemaWithTime,
+)(TransactionSchemaColumns))
 
 export const TransactionRelations = relations(TransactionSchema, ({ one }) => ({
   batch: one(BatchSchema, {

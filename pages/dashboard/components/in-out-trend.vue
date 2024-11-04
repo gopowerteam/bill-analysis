@@ -67,7 +67,6 @@ function render(data: {
           }
         }
       },
-
     },
     yAxis: {
       type: 'value',

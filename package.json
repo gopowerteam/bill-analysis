@@ -29,6 +29,7 @@
     "nanoid": "^5.0.7",
     "nuxt": "^3.13.2",
     "nuxt-echarts": "^0.2.3",
+    "nuxt-scheduler": "^0.1.9",
     "pg": "^8.13.1",
     "pinia": "^2.2.4",
     "pinia-plugin-persistedstate": "^4.1.2",

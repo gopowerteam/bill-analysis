@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     ['dayjs-nuxt', {}],
     ['@nuxt/eslint', {}],
     ['nuxt-echarts', {}],
+    ['nuxt-scheduler', {}],
   ],
   imports: {
     dirs: [
