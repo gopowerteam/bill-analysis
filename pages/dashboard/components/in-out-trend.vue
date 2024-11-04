@@ -42,8 +42,6 @@ function render(data: {
   type: TransactionTypeEnum
   amount: number
 }[]) {
-  console.log(data)
-  console.log(data.filter(x => x.type === TransactionTypeEnum.In).map(x => x.amount / 100))
   option = {
     tooltip: {
       trigger: 'axis',

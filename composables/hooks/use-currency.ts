@@ -45,12 +45,6 @@ export function useCurrency(value: number, options?: Partial<CurrentOptions>) {
       : {},
   }
 
-  if (options.outputUnit === '千') {
-    const scale1 = CurrentUnitMaps.get(options!.inputUnit!)! / CurrentUnitMaps.get(options!.outputUnit! as CurrencyUnit)!
-    const value1 = parseFloat((value * scale1).toFixed(10))
-    console.log(value, scale1, value1)
-  }
-
   // 金额缩放处理
   const scale = CurrentUnitMaps.get(options!.inputUnit!)! / CurrentUnitMaps.get(options!.outputUnit! as CurrencyUnit)!
   value = parseFloat((value * scale).toFixed(10))

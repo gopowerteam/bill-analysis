@@ -8,6 +8,20 @@
         交易方
       </div>
     </template>
+    <template #extra>
+      <ARadioGroup
+        v-model="orderBy"
+        type="button"
+        size="mini"
+      >
+        <ARadio value="orderByAmount">
+          按金额
+        </ARadio>
+        <ARadio value="orderByCount">
+          按频率
+        </ARadio>
+      </ARadioGroup>
+    </template>
     <div class="p-10px w-full h-300px relative space-y-10px">
       <div class="flex-auto">
         <ATable
@@ -18,11 +32,9 @@
         >
           <template #amount="{ record: { amount } }">
             <div
-              v-currency
+              v-currency:[amount]
               class="space-x-2 text-right"
-            >
-              {{ amount }}
-            </div>
+            />
           </template>
         </ATable>
       </div>
@@ -33,33 +45,54 @@
 <script setup lang="ts">
 const store = useStore()
 
-let data = $ref<{
-  cardName: string
-  cardTailNumber: string
-  countTotal: number
-  channel: string[]
-}[]>([])
+const orderBy = $ref<'orderByCount' | 'orderByAmount'>('orderByAmount')
+
+interface Counterparty {
+  counterparty: string
+  count: number
+  amount: number
+}
+
+let counterpartys = $ref<{
+  orderByAmount: Counterparty[]
+  orderByCount: Counterparty[]
+}>({
+  orderByAmount: [],
+  orderByCount: [],
+})
+
+const data = $computed(() => counterpartys[orderBy as 'orderByCount' | 'orderByAmount'])
 
 const columns = [
   {
     title: '交易方',
     dataIndex: 'counterparty',
+    ellipsis: true,
+    tooltip: true,
   }, {
     title: '交易次数',
     dataIndex: 'count',
     align: 'center' as const,
+    width: 100,
   }, {
     title: '交易金额',
     align: 'right' as const,
     slotName: 'amount',
+    width: 140,
   }]
+
 async function requestData() {
-  data = await $request('/api/report/:record/counterparty', {
+  const { orderByAmount, orderByCount } = await $request('/api/report/:record/counterparty', {
     method: 'GET',
     params: {
       record: store.record!.id,
     },
   })
+
+  counterpartys = {
+    orderByAmount,
+    orderByCount,
+  }
 }
 
 onMounted(async () => {

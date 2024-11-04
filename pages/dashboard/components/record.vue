@@ -54,14 +54,10 @@
               {{ item.batch.count }}
             </ADescriptionsItem>
             <ADescriptionsItem label="收入总额">
-              <span v-currency>
-                {{ item.batch.inAmount }}
-              </span>
+              <span v-currency:[item.batch.inAmount] />
             </ADescriptionsItem>
             <ADescriptionsItem label="支出总额">
-              <span v-currency>
-                {{ item.batch.outAmount }}
-              </span>
+              <span v-currency:[item.batch.outAmount] />
             </ADescriptionsItem>
           </ADescriptions>
         </ATabPane>

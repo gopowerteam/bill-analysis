@@ -26,7 +26,6 @@ const store = useStore()
 let option = $ref<ECOption>()
 
 async function requestData() {
-  console.log(store.record!.id)
   const data = await $request('/api/report/:record/month', {
     method: 'GET',
     params: {

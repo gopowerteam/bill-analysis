@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const data = await db.query.BatchRecordSchema.findMany({ where: eq(BatchRecordSchema.recordId, record) })
   const batches = data.map(x => x.batchId)
 
-  const result = await db.select({
+  const orderByCount = await db.select({
     counterparty: TransactionSchema.counterparty,
     count: sql<number>`cast(count(*) as int)`,
     amount: sql<number>`cast(sum(transaction.transaction_amount) as int)`,
@@ -35,5 +35,31 @@ export default defineEventHandler(async (event) => {
       ),
     )
 
-  return result
+  const orderByAmount = await db.select({
+    counterparty: TransactionSchema.counterparty,
+    count: sql<number>`cast(count(*) as int)`,
+    amount: sql<number>`cast(sum(transaction.transaction_amount) as int)`,
+  })
+    .from(TransactionSchema)
+    .limit(5)
+    .groupBy(TransactionSchema.counterparty)
+    .orderBy(schema => desc(schema.amount))
+    .where(
+      and(
+        inArray(TransactionSchema.batchId, batches),
+        not(
+          eq(TransactionSchema.counterparty, ''),
+
+        ),
+        not(
+          eq(TransactionSchema.counterparty, '/'),
+
+        ),
+      ),
+    )
+
+  return {
+    orderByCount,
+    orderByAmount,
+  }
 })
