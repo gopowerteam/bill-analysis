@@ -59,6 +59,12 @@
             <ADescriptionsItem label="支出总额">
               <span v-currency:[item.batch.outAmount] />
             </ADescriptionsItem>
+            <ADescriptionsItem label="开始时间">
+              {{ dayjs(item.batch.startTime).format('YYYY-MM-DD HH:mm:ss') }}
+            </ADescriptionsItem>
+            <ADescriptionsItem label="结束时间">
+              {{ dayjs(item.batch.endTime).format('YYYY-MM-DD HH:mm:ss') }}
+            </ADescriptionsItem>
           </ADescriptions>
         </ATabPane>
       </ATabs>
@@ -70,6 +76,7 @@
 import { TransactionChannelEnum } from '~/drizzle/schemas'
 
 const store = useStore()
+const dayjs = useDayjs()
 </script>
 
 <style scoped>

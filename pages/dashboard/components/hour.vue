@@ -8,6 +8,21 @@
         活跃-日
       </div>
     </template>
+    <template #extra>
+      <ARadioGroup
+        v-model="orderBy"
+        type="button"
+        size="mini"
+        @change="() => render()"
+      >
+        <ARadio value="orderByAmount">
+          按金额
+        </ARadio>
+        <ARadio value="orderByCount">
+          按频率
+        </ARadio>
+      </ARadioGroup>
+    </template>
     <div
       class="p-10px w-full h-500px flex flex-col relative"
     >
@@ -25,27 +40,58 @@
 const store = useStore()
 let option = $ref<ECOption>()
 
+const orderBy = $ref<'orderByCount' | 'orderByAmount'>('orderByCount')
+
+let data = $ref< {
+  time: string
+  countTotal: number
+  countWxPay: number
+  countAliPay: number
+  amountTotal: number
+  amountWxPay: number
+  amountAliPay: number
+}[]>([])
+
 async function requestData() {
-  const data = await $request('/api/report/:record/hour', {
+  data = await $request('/api/report/:record/hour', {
     method: 'GET',
     params: {
       record: store.record!.id,
     },
   })
 
-  render(data)
+  render()
 }
 
-function render(data: {
-  time: string
-  countTotal: number
-  countWxPay: number
-  countAliPay: number
-}[]) {
+function render() {
   option = {
     animation: false,
     tooltip: {
       className: 'echarts-tooltip',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: (data: any) => {
+        const base = `${data.seriesName}<br>${data.marker}${data.name} `
+        const maps = {
+          总次数: 'countTotal',
+          总金额: 'amountTotal',
+          微信: orderBy === 'orderByAmount' ? 'amountWxPay' : 'countWxPay',
+          支付宝: orderBy === 'orderByAmount' ? 'amountAliPay' : 'countAliPay',
+        }
+
+        switch (orderBy) {
+          case 'orderByAmount':
+            return base + useCurrency(data.value[maps[data.seriesName as keyof typeof maps]])
+          case 'orderByCount':
+            return base + `${data.value[maps[data.seriesName as keyof typeof maps]]}次`
+        }
+      },
+    },
+    legend: {
+      selected: {
+        总次数: true,
+        微信: false,
+        支付宝: false,
+      },
     },
     toolbox: {
       show: false,
@@ -55,15 +101,44 @@ function render(data: {
       },
     },
     dataset: {
-      dimensions: ['time', 'countTotal', 'countWxPay', 'countAliPay'],
+      dimensions: orderBy === 'orderByCount'
+        ? ['time', 'countTotal', 'countWxPay', 'countAliPay']
+        : ['time', 'amountTotal', 'amountWxPay', 'amountAliPay'],
       source: data,
     },
     xAxis: { type: 'category' },
     yAxis: {},
     itemStyle: { borderRadius: 3 },
     series: [{
-      name: '使用次数',
-      type: 'line', label: { show: true },
+      name: orderBy === 'orderByCount' ? '总次数' : '总金额',
+      type: 'line',
+      label: {
+        show: true,
+        formatter: ({ data }: { data: { countTotal: number, amountTotal: number } }) => {
+          return orderBy === 'orderByCount' ? `${data.countTotal}` : useCurrency(data.amountTotal)
+        },
+      },
+
+    },
+    {
+      name: '微信',
+      type: 'line',
+      label: {
+        show: true,
+        formatter: ({ data }: { data: { countWxPay: number, amountWxPay: number } }) => {
+          return orderBy === 'orderByCount' ? `${data.countWxPay}` : useCurrency(data.amountWxPay)
+        },
+      },
+    },
+    {
+      name: '支付宝',
+      type: 'line',
+      label: {
+        show: true,
+        formatter: ({ data }: { data: { countAliPay: number, amountAliPay: number } }) => {
+          return orderBy === 'orderByCount' ? `${data.countAliPay}` : useCurrency(data.amountAliPay)
+        },
+      },
     }],
   } as ECOption
 }

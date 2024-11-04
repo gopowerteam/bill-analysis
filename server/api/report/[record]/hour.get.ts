@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
   const result = await db.select({
     channel: TransactionSchema.transactionChannel,
     count: count(),
+    amount: sql<number>`cast(sum(transaction.transaction_amount) as int)`,
     time: sql<string>`(SELECT to_char( transaction_time, 'hh24' ))`.as('time'),
   })
     .from(TransactionSchema)
@@ -30,6 +31,9 @@ export default defineEventHandler(async (event) => {
     const item = result.filter(x => x.time === hour) || []
     return {
       time: `${hour}时`,
+      amountTotal: sum(item, x => x.amount),
+      amountWxPay: item.find(x => x.channel === TransactionChannelEnum.WxPay)?.amount || 0,
+      amountAliPay: item.find(x => x.channel === TransactionChannelEnum.AliPay)?.amount || 0,
       countTotal: sum(item, x => x.count),
       countWxPay: item.find(x => x.channel === TransactionChannelEnum.WxPay)?.count || 0,
       countAliPay: item.find(x => x.channel === TransactionChannelEnum.AliPay)?.count || 0,
