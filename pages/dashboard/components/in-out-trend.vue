@@ -83,14 +83,26 @@ function render(data: {
         type: 'bar',
         barWidth: 20,
         data: data.filter(x => x.type === TransactionTypeEnum.In).map(x => x.amount / 100),
-        label: { show: true, position: 'top' },
+        label: {
+          show: false,
+          position: 'top',
+          formatter: ({ data }: { data: number }) => {
+            return useCurrency(data)
+          },
+        },
       },
       {
         name: '支出',
         type: 'bar',
         barWidth: 20,
         data: data.filter(x => x.type === TransactionTypeEnum.Out).map(x => x.amount / 100),
-        label: { show: true, position: 'top' },
+        label: {
+          show: false,
+          position: 'top',
+          formatter: ({ data }: { data: number }) => {
+            return useCurrency(data)
+          },
+        },
       },
     ],
   } as ECOption
