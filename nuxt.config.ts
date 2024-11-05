@@ -52,6 +52,13 @@ export default defineNuxtConfig({
       },
     },
   },
+  dayjs: {
+    locales: ['zh-cn'],
+    defaultLocale: 'zh-cn',
+    defaultTimezone: 'Asia/Shanghai',
+    plugins: ['relativeTime', 'utc', 'timezone', 'minMax'],
+
+  },
   echarts: {
     charts: ['LineChart', 'BarChart'],
     components: ['LegendComponent', 'TitleComponent', 'DatasetComponent', 'ToolboxComponent', 'GridComponent', 'TooltipComponent'],

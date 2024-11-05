@@ -23,6 +23,40 @@
     <ACard class="flex-auto">
       <ATabs>
         <ATabPane
+          key="total"
+          title="统计"
+          class="shadow p-10px"
+        >
+          <template #title>
+            <div
+              class="flex items-center space-x-2"
+            >
+              <i class="icon-park:funds w-20px h-20px" />
+              <div>合计</div>
+            </div>
+          </template>
+          <ADescriptions :column="2">
+            <ADescriptionsItem label="账单数量">
+              {{ store?.record?.batches.length }}
+            </ADescriptionsItem>
+            <ADescriptionsItem label="交易次数">
+              {{ sum(store!.record!.batches, x => x.batch.count) }}
+            </ADescriptionsItem>
+            <ADescriptionsItem label="收入总额">
+              <span v-currency:[data.inAmount] />
+            </ADescriptionsItem>
+            <ADescriptionsItem label="支出总额">
+              <span v-currency:[data.outAmount] />
+            </ADescriptionsItem>
+            <ADescriptionsItem label="开始时间">
+              {{ dayjs(data.startTime).format('YYYY-MM-DD HH:mm:ss') }}
+            </ADescriptionsItem>
+            <ADescriptionsItem label="结束时间">
+              {{ dayjs(data.endTime).format('YYYY-MM-DD HH:mm:ss') }}
+            </ADescriptionsItem>
+          </ADescriptions>
+        </ATabPane>
+        <ATabPane
           v-for="item in store?.record?.batches"
           :key="item.batchId"
           class="shadow p-10px"
@@ -76,10 +110,19 @@
 </template>
 
 <script setup lang="ts">
+import { sum } from 'radash'
 import { TransactionChannelEnum } from '~/drizzle/schemas'
 
 const store = useStore()
 const dayjs = useDayjs()
+
+const data = computed(() => ({
+  count: sum(store!.record!.batches, x => x.batch.count),
+  inAmount: sum(store!.record!.batches, x => x.batch.inAmount),
+  outAmount: sum(store!.record!.batches, x => x.batch.outAmount),
+  startTime: dayjs.min(store!.record!.batches.map(x => dayjs(x.batch.startTime))),
+  endTime: dayjs.min(store!.record!.batches.map(x => dayjs(x.batch.endTime))),
+}))
 </script>
 
 <style scoped>
