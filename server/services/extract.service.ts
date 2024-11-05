@@ -58,12 +58,60 @@ async function extractUserFromAliPay(document: PDFDocumentProxy) {
   return [name, idNumber, alipayAccount]
 }
 
+function fixRowFromAliPay(row: CellItem[], columns: { x1: number, x2: number }[]) {
+  // 修正支付宝订单
+  // * 商家订单号&交易时间合并问题
+  const timeCell = row[row.length - 1]
+  const timeStr = timeCell.s
+  if (
+    timeStr.includes(' ')
+    && dayjs(timeStr).isValid() === false
+  ) {
+    const [merchantNo, time] = timeStr.split(' ')
+    if (merchantNo && time && dayjs(time).isValid()) {
+      row[row.length - 1] = {
+        x1: columns[columns.length - 2].x1,
+        y1: timeCell.y1,
+        x2: columns[columns.length - 2].x2,
+        y2: timeCell.y2,
+        s: merchantNo,
+      }
+
+      row[row.length] = {
+        x1: columns[columns.length - 1].x1,
+        y1: timeCell.y1,
+        x2: columns[columns.length - 1].x2,
+        y2: timeCell.y2,
+        s: time,
+      }
+    }
+  }
+
+  return row
+}
+
 async function extractTransactionsFromAliPay(document: PDFDocumentProxy) {
   const rows = await extractTable(document, 5, 8)
 
-  const findCell = requestFindCellInRow(rows, 8)
+  const { columns, findCell } = requestFindCellInRow(rows, 8)
 
-  return rows.map((row) => {
+  return rows.filter((row) => {
+    row = fixRowFromAliPay(row, columns)
+    const amount = parseFloat(findCell(row, 4))
+    const time = dayjs(findCell(row, 7), 'YYYY-MM-DDHH:mm:ss')
+
+    if (!isNaN(amount) && time.isValid()) {
+      return true
+    }
+    else {
+      console.error('数据格式异常:', {
+        value: findCell(row, 4),
+        row,
+        isNaN: isNaN(amount),
+        timeValid: time.isValid(),
+      })
+    }
+  }).map((row) => {
     return {
       transactionType: parserTransactionType(findCell(row, 0)),
       counterparty: findCell(row, 1),
@@ -93,7 +141,6 @@ async function extractTimeRangeFromAliPay(document: PDFDocumentProxy) {
 }
 
 // WxPay Extract
-
 export async function extractFromWxPay(document: PDFDocumentProxy) {
   const batch = await extractBatchFromWxPay(document)
   const transactions = await extractTransactionsFromWxPay(document)
@@ -142,7 +189,7 @@ async function extractUserFromWxPay(document: PDFDocumentProxy) {
 async function extractTransactionsFromWxPay(document: PDFDocumentProxy) {
   const rows = await extractTable(document, 5, 8)
 
-  const findCell = requestFindCellInRow(rows, 8)
+  const { findCell } = requestFindCellInRow(rows, 8)
 
   return rows.map((row) => {
     return {
@@ -181,25 +228,35 @@ function requestFindCellInRow(rows: CellItem[][], size: number) {
     x2: NaN,
   }))
 
-  const data = rows.filter(x => x.length === size)
+  const data = rows
+    .filter(x => x.length === size)
+    .filter(x => x.every(item => !item.s.includes(' ')))
 
   for (let i = 0; i < size; i++) {
     columns[i].x1 = min(data.map(item => item[i].x1))!
     columns[i].x2 = max(data.map(item => item[i].x2))!
+
+    // 当前列开始不能小于上一个列的结束
+    if (i > 1) {
+      columns[i].x1 = Math.max(columns[i - 1].x2, columns[i].x1)
+    }
   }
 
-  return (row: CellItem[], index: number) => {
-    if (index === size - 1) {
-      const { x1, x2 } = columns[index]
-      const cell = row.find(cell => cell.x1 >= x1 && cell.x2 <= x2)
-      return cell?.s || ''
-    }
-    else {
-      const { x1 } = columns[index]
-      const { x2 } = columns[index + 1]
-      const cell = row.find(cell => cell.x1 >= x1 && cell.x2 <= x2)
-      return cell?.s || ''
-    }
+  return {
+    columns,
+    findCell: (row: CellItem[], index: number) => {
+      if (index === size - 1) {
+        const { x1, x2 } = columns[index]
+        const cell = row.find(cell => cell.x1 >= x1 && cell.x2 <= x2)
+        return cell?.s || ''
+      }
+      else {
+        const { x1 } = columns[index]
+        const { x2 } = columns[index + 1]
+        const cell = row.find(cell => cell.x1 >= x1 && cell.x2 <= x2)
+        return cell?.s || ''
+      }
+    },
   }
 }
 
