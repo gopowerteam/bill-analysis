@@ -10,7 +10,8 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
 
       const result = useCurrency(value, binding.value)
-      el.innerHTML = result
+      el.setAttribute('style', 'font-variant-numeric:tabular-nums;')
+      el.innerText = result
     },
     updated(el: HTMLElement, binding) {
       const text = el.innerText
