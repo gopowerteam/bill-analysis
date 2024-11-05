@@ -72,7 +72,8 @@ const columns = [
   }, {
     title: '交易次数',
     dataIndex: 'count',
-    align: 'center' as const,
+    align: 'right' as const,
+    bodyCellClass: 'tabular-nums',
     width: 100,
   }, {
     title: '交易金额',
