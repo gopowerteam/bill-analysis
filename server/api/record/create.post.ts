@@ -7,17 +7,24 @@ const Schema = z.object({
   batches: z.string().array().nonempty(),
 })
 
-export default defineEventHandler(async (event) => {
-  const { batches } = await useSafeBody(event, Schema)
-
+async function findUserIdByBatches(batches: string[]) {
   const batch = await db.query.BatchSchema.findFirst({ where:
     inArray(BatchSchema.id, batches),
   })
 
+  return batch!.userId
+}
+
+export default defineEventHandler(async (event) => {
+  const { batches } = await useSafeBody(event, Schema)
+
+  // create record
+  const userId = await findUserIdByBatches(batches)
   const [record] = await db.insert(RecordSchema).values({
-    userId: batch!.userId,
+    userId,
   }).returning()
 
+  // create batch_record
   await db.insert(BatchRecordSchema).values(batches.map(batch => ({
     batchId: batch,
     recordId: record.id,

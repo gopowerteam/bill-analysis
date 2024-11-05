@@ -1,5 +1,5 @@
-import { count } from 'drizzle-orm'
-import { TransactionHistorySchema, TransactionSchema } from '~/drizzle/schemas'
+import { count, eq } from 'drizzle-orm'
+import { RecordSchema, TransactionHistorySchema, TransactionSchema } from '~/drizzle/schemas'
 
 const pageSize = 5000
 
@@ -24,7 +24,14 @@ export async function migrateTransaction() {
       })
   }
 
-  console.log(total)
+  console.log('migrate transactions count:' + total)
 
   await db.delete(TransactionSchema)
+}
+
+export async function migrateRecords() {
+  await db.update(RecordSchema).set({
+    outdated: true,
+  })
+    .where(eq(RecordSchema.outdated, false))
 }

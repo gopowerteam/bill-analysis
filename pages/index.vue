@@ -84,30 +84,92 @@
               请导入待分析的账单文件
             </div>
           </div>
-          <AButton
-            :disabled="batches.length===0"
-            type="primary"
-            class="h-50px w-520px"
-            size="large"
-            shape="round"
-            @click="onSubmit"
-          >
-            开始分析
-          </AButton>
+          <div class="flex flex-col space-y-2">
+            <AButton
+              :disabled="batches.length===0"
+              type="primary"
+              class="h-50px w-520px"
+              size="large"
+              shape="round"
+              @click="onSubmit"
+            >
+              开始分析
+            </AButton>
+            <AButton
+              type="outline"
+              class="h-50px w-520px"
+              size="large"
+              shape="round"
+              @click="() => showHistory=true"
+            >
+              历史查询
+            </AButton>
+          </div>
         </div>
       </div>
     </ASpin>
+    <ADrawer
+      v-model:visible="showHistory"
+      closable
+      mask-closable
+      placement="right"
+      :width="340"
+      title="历史查询"
+      :footer="false"
+    >
+      <div class="space-y-2">
+        <div
+          v-for="record in records"
+          :key="record.id"
+          class="border-solid border-1px p-2 rounded-5px cursor-pointer hover:bg-#efefef"
+          @click="() => onHistory(record)"
+        >
+          <div class="font-bold flex justify-between">
+            <div>{{ record.user.username }}</div>
+            <div class="flex space-x-1">
+              <div
+                v-for="{ batch } in record.batches"
+                :key="batch.id"
+              >
+                <ATooltip
+                  v-if="batch.channel===TransactionChannelEnum.WxPay"
+                  :content="batch.id"
+                >
+                  <i class="icon-svg:wxpay w-20px h-20px" />
+                </ATooltip>
+                <ATooltip
+                  v-if="batch.channel===TransactionChannelEnum.AliPay"
+                  :content="batch.id"
+                >
+                  <i class="icon-svg:alipay w-20px h-20px" />
+                </ATooltip>
+              </div>
+            </div>
+          </div>
+          <div class="text-#333 text-12px">
+            {{ dayjs(record.createdAt).format("YYYY-MM-DD HH-mm-ss") }}
+          </div>
+        </div>
+      </div>
+      <AEmpty v-if="!records.length">
+        暂无历史查询记录
+      </AEmpty>
+    </ADrawer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { pick } from 'radash'
 import { TransactionChannelEnum } from '~/drizzle/schemas'
+import type { Record } from '~/drizzle/schemas'
 
+const dayjs = useDayjs()
 let loading = $ref(false)
 const { handleFileInput, files } = useFileStorage()
 
 let batches = $ref<Omit<Bill, 'transactions'>[]>([])
+let records = $ref<Record[]>([])
+const showHistory = $ref(false)
 const user = $computed(() => {
   if (batches.length) {
     return pick(batches[0], ['username', 'idNumber'])
@@ -185,6 +247,27 @@ async function onSubmit() {
     loading = false
   }
 }
+
+function onHistory(record: Record) {
+  navigateTo({
+    name: 'dashboard',
+    params: {
+      record: record.id,
+    },
+  })
+}
+
+function requestRecordHistory() {
+  $request('/api/record/history', {
+    method: 'GET',
+  }).then((data) => {
+    records = data
+  })
+}
+
+onMounted(() => {
+  requestRecordHistory()
+})
 </script>
 
 <style scoped>

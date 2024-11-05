@@ -1,5 +1,5 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
-import { pgTable, text } from 'drizzle-orm/pg-core'
+import { boolean, pgTable, text } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { pipe } from '../utils/pipe'
 import { SchemaWithTime, SchemaWithUUID } from '../fields'
@@ -11,6 +11,7 @@ export const RecordSchema = pgTable('record', pipe(
   SchemaWithTime,
 )({
   userId: text('user_id').notNull(),
+  outdated: boolean().default(false),
 }))
 
 export const RecordRelations = relations(RecordSchema, ({ one, many }) => ({
