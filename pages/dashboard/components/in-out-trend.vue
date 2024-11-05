@@ -1,5 +1,6 @@
 <template>
   <ACard
+    hoverable
     :loading="!option"
     class="w-full h-full"
   >

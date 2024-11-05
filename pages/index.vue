@@ -147,7 +147,7 @@
             </div>
           </div>
           <div class="text-#333 text-12px">
-            {{ dayjs(record.createdAt).format("YYYY-MM-DD HH-mm-ss") }}
+            {{ dayjs(record.createdAt).format("YYYY-MM-DD HH:mm:ss") }}
           </div>
         </div>
       </div>

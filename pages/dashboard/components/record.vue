@@ -1,6 +1,9 @@
 <template>
   <div class="flex">
-    <ACard class="flex-center">
+    <ACard
+      class="flex-center"
+      hoverable
+    >
       <div class="flex space-x-10px font-bold">
         <ADescriptions
           :column="1"
