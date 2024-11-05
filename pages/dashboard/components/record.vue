@@ -35,7 +35,10 @@
               <div>合计</div>
             </div>
           </template>
-          <ADescriptions :column="2">
+          <ADescriptions
+            :column="2"
+            class="h-120px"
+          >
             <ADescriptionsItem label="账单数量">
               {{ store?.record?.batches.length }}
             </ADescriptionsItem>
@@ -77,7 +80,10 @@
               <div>支付宝</div>
             </div>
           </template>
-          <ADescriptions :column="2">
+          <ADescriptions
+            :column="2"
+            class="h-120px"
+          >
             <ADescriptionsItem
               label="账单编号"
               :span="2"
