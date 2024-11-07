@@ -121,11 +121,16 @@
         <div
           v-for="record in records"
           :key="record.id"
-          class="border-solid border-1px p-2 rounded-5px cursor-pointer hover:bg-#efefef"
+          class="border-solid border-1px p-2 space-y-5px rounded-5px cursor-pointer hover:bg-#efefef"
           @click="() => onHistory(record)"
         >
-          <div class="font-bold flex justify-between">
+          <div class="font-bold flex justify-between items-center">
             <div>{{ record.user.username }}</div>
+            <div class="text-#333 text-12px">
+              {{ record.user.id }}
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
             <div class="flex space-x-1">
               <div
                 v-for="{ batch } in record.batches"
@@ -135,19 +140,19 @@
                   v-if="batch.channel===TransactionChannelEnum.WxPay"
                   :content="batch.id"
                 >
-                  <i class="icon-svg:wxpay w-20px h-20px" />
+                  <i class="icon-svg:wxpay w-15px h-15px" />
                 </ATooltip>
                 <ATooltip
                   v-if="batch.channel===TransactionChannelEnum.AliPay"
                   :content="batch.id"
                 >
-                  <i class="icon-svg:alipay w-20px h-20px" />
+                  <i class="icon-svg:alipay w-15px h-15px" />
                 </ATooltip>
               </div>
             </div>
-          </div>
-          <div class="text-#333 text-12px">
-            {{ dayjs(record.createdAt).format("YYYY-MM-DD HH:mm:ss") }}
+            <div class="text-#999 text-12px">
+              {{ dayjs(record.createdAt).format("YYYY-MM-DD HH:mm:ss") }}
+            </div>
           </div>
         </div>
       </div>
