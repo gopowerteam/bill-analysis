@@ -236,6 +236,7 @@ async function onSubmit() {
       name: 'dashboard',
       params: {
         record: record.id,
+
       },
     })
   }
