@@ -21,6 +21,8 @@
     "@arco-design/web-vue": "^2.56.2",
     "@mkas3/pdf-table-parser": "^1.2.18",
     "@pinia/nuxt": "^0.5.5",
+    "@vueuse/core": "^11.3.0",
+    "@vueuse/nuxt": "^11.3.0",
     "arco-design-nuxt-module": "^0.1.0",
     "dayjs-nuxt": "^2.1.11",
     "drizzle-orm": "^0.35.3",
@@ -69,5 +71,6 @@
   "breakpoints": {
     "mobile": 320,
     "desktop": 1024
-  }
+  },
+  "packageManager": "pnpm@9.6.0"
 }

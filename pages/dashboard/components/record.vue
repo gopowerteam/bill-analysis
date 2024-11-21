@@ -12,10 +12,18 @@
           :value-style="{ fontWeight: 'bold' }"
         >
           <ADescriptionsItem label="姓名:">
-            {{ store.record?.user.username }}
+            <span>  {{ store.record?.user.username }}</span>
+            <i
+              class="icon-park-outline:copy-one cursor-pointer"
+              @click="onCopy(store.record!.user!.username!)"
+            />
           </ADescriptionsItem>
           <ADescriptionsItem label="  身份证号:">
-            {{ store.record?.user.id }}
+            <span>  {{ store.record?.user.id }}</span>
+            <i
+              class="icon-park-outline:copy-one cursor-pointer"
+              @click="onCopy(store.record!.user!.id!)"
+            />
           </ADescriptionsItem>
         </ADescriptions>
       </div>
@@ -119,8 +127,14 @@
 import { sum } from 'radash'
 import { TransactionChannelEnum } from '~/drizzle/schemas'
 
+const { copy } = useClipboard({ legacy: true })
 const store = useStore()
 const dayjs = useDayjs()
+
+function onCopy(value: string) {
+  copy(value)
+  Message.success('复制成功')
+}
 
 const data = computed(() => ({
   count: sum(store!.record!.batches, x => x.batch.count),

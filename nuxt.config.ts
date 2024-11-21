@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     ['@nuxt/eslint', {}],
     ['nuxt-echarts', {}],
     ['nuxt-scheduler', {}],
+    ['@vueuse/nuxt', {}],
   ],
   imports: {
     dirs: [
