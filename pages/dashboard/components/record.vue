@@ -39,7 +39,7 @@
             <div
               class="flex items-center space-x-2"
             >
-              <i class="icon-park:funds w-20px h-20px" />
+              <i class="icon-park:data w-20px h-20px" />
               <div>合计</div>
             </div>
           </template>
@@ -96,7 +96,12 @@
               label="账单编号"
               :span="2"
             >
-              {{ item.batchId }}
+              <div class="flex justify-between">
+                <div>{{ item.batchId }}</div>
+                <ALink @click="() => onOpenBatch(item.batchId)">
+                  查看交易数据
+                </ALink>
+              </div>
             </ADescriptionsItem>
             <ADescriptionsItem label="账单类型">
               {{ TransactionChannelDict.get(item.batch.channel) }}
@@ -136,6 +141,9 @@ function onCopy(value: string) {
   Message.success('复制成功')
 }
 
+function onOpenBatch(batchId: string) {
+  window.open(`/batch/${batchId}`, '_black')
+}
 const data = computed(() => ({
   count: sum(store!.record!.batches, x => x.batch.count),
   inAmount: sum(store!.record!.batches, x => x.batch.inAmount),

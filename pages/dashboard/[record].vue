@@ -36,7 +36,7 @@
       </AGrid>
     </ASpin>
   </div>
-  <div class="fixed right-20px top-20px">
+  <div class="fixed right-20px top-22px">
     <AButton
       shape="circle"
       class="w-50px h-50px"
@@ -87,7 +87,7 @@ provide('record', route.params.record)
 
 function onExport() {
   if (container.value) {
-    const element = container.value.firstElementChild.firstElementChild
+    const element = container.value.firstElementChild!.firstElementChild as HTMLElement
     html2canvas(element).then((canvas: HTMLCanvasElement) => {
       const data = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
       const creatIMg = document.createElement('a')

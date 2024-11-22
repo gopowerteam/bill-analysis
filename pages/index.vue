@@ -102,7 +102,7 @@
               shape="round"
               @click="() => showHistory=true"
             >
-              历史查询
+              今日查询
             </AButton>
           </div>
         </div>
@@ -114,7 +114,7 @@
       mask-closable
       placement="right"
       :width="340"
-      title="历史查询"
+      title="今日查询"
       :footer="false"
     >
       <div class="space-y-2">
@@ -157,7 +157,7 @@
         </div>
       </div>
       <AEmpty v-if="!records.length">
-        暂无历史查询记录
+        暂无今日查询记录
       </AEmpty>
     </ADrawer>
   </div>

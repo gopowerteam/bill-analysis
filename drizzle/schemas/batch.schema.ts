@@ -31,7 +31,7 @@ export const BatchRelations = relations(BatchSchema, ({ one, many }) => ({
   transactions: many(TransactionSchema),
 }))
 
-export type Batch = InferSchemaType<'BatchSchema', { user: true }>
+export type Batch = InferSchemaType<'BatchSchema', { user: true, transactions: true }>
 
 export const CreateBatchSchema = createInsertSchema(BatchSchema)
 export const SelectBatchSchema = createSelectSchema(BatchSchema)
