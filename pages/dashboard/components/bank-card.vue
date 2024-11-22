@@ -26,10 +26,10 @@
     <div class="p-10px w-full h-300px relative space-y-10px">
       <div class="flex-auto">
         <ATable
-          :height="500"
           :data="data"
           :columns="columns"
           :pagination="false"
+          :scroll="{ y: 250 }"
         >
           <template #amountTotal="{ record }">
             <div

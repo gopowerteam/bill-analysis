@@ -38,11 +38,12 @@
   </div>
   <div class="fixed right-20px top-22px">
     <AButton
-      shape="circle"
-      class="w-50px h-50px"
       @click="onExport"
     >
-      <i class="icon-park:share" />
+      <template #icon>
+        <i class="icon-park:share" />
+      </template>
+      导出
     </AButton>
   </div>
 </template>
